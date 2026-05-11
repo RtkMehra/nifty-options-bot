@@ -16,7 +16,7 @@
 - Minimum coverage: 70% for packages under `internal/`, 50% for `pkg/`
 - Tests must not depend on external APIs (NSE, Dhan) — mock all external calls
 - Table-driven tests using Go's `testing` package (no third-party test frameworks)
-- Race condition tests for all goroutine-based code: `go test -race`
+- Race condition tests for all goroutine-based code: `go test -race` (requires CGO on Windows)
 - Backtest tests must reproduce from stored data, not fetch live
 
 ### Git Conventions

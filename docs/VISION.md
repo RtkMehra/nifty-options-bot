@@ -49,16 +49,31 @@ Build a fully automated, capital-efficient Nifty 50 options buying bot that syst
 
 ## Build Roadmap
 
-| Phase | Duration | Deliverable |
-|-------|----------|-------------|
-| P1 — Foundation | 1 week | Project structure, types, NSE fetcher, SQLite store |
-| P2 — Signal Engine | 1 week | IVR, Z-Score, conviction scorer, unit tests |
-| P3 — Backtester | 2 weeks | BSM pricer, walk-forward engine, 4 strategy backtest |
-| P4 — Strategy + Execution | 1 week | Strategy selector, Dhan client, smart fill, dry-run |
-| P5 — Risk + Alerting | 1 week | Risk monitor, portfolio limits, Telegram alerts |
-| P6 — Paper Trading | 4 weeks | Full live run, simulated fills, track P&L |
-| P7 — Live Micro | 4–8 weeks | 1 lot per trade, max ₹15k risk, daily review |
-| P8 — Scale | Ongoing | Increase size via Kelly, add straddle strategy |
+| Phase | Duration | Deliverable | Status |
+|-------|----------|-------------|--------|
+| P1 — Foundation | 1 week | Project structure, types, NSE fetcher, SQLite store | ✅ Done |
+| P2 — Signal Engine | 1 week | IVR, Z-Score, conviction scorer, expected move, max pain | ✅ Done |
+| P3 — Backtester | 2 weeks | BSM pricer, walk-forward engine, 4 strategy backtest | ❌ Not started |
+| P4 — Strategy + Execution | 1 week | Strategy selector, Dhan client, smart fill, dry-run pipeline | ✅ Done |
+| P5 — Risk + Alerting | 1 week | Risk monitor, portfolio limits, Telegram alerts | ❌ Not started |
+| P6 — Paper Trading | 4 weeks | Full live run, simulated fills, track P&L | ❌ Not started |
+| P7 — Live Micro | 4–8 weeks | 1 lot per trade, max ₹15k risk, daily review | ❌ Not started |
+| P8 — Scale | Ongoing | Increase size via Kelly, add straddle strategy | ❌ Not started |
+
+## Current State (P4 Complete)
+
+The full pipeline is wired in `cmd/bot/main.go`:
+```
+NSE API → DataFetcher → MarketSnapshot → SignalEngine → Signal → StrategyEngine → TradeDecision → ExecutionEngine (dry-run)
+```
+
+- All goroutines respect context cancellation
+- SQLite-backed store for VIX history and trade logging
+- 7 strategies: Long Call/Put, Bull Call/Bear Put Spreads, Long Straddle, OTM Call/Put
+- Priority-ordered strategy selection matrix
+- Half-Kelly position sizing with lot calculation
+- Dhan REST API client (live trading ready, currently dry-run)
+- BSM pricer with IV solver
 
 ## Guiding Principles
 1. **Loss is known at entry** — premium paid is the max loss. Always.
